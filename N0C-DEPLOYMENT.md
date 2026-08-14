@@ -43,7 +43,26 @@ Avant le build, verifier que les paquets principaux utilisent tous la meme versi
 npm ls @strapi/admin @strapi/content-manager @strapi/content-type-builder @strapi/upload @strapi/strapi
 ```
 
-Pour ce depot, ils doivent tous afficher `5.50.0`. Si une autre version apparait, ne pas reutiliser le build admin existant : effectuer `npm ci --include=dev`, supprimer uniquement `dist/build`, puis relancer `npm run build`.
+Ils doivent tous afficher la meme version que `@strapi/strapi` dans `package.json`. Si plusieurs versions apparaissent, ne pas reutiliser le build admin existant : effectuer `npm ci --include=dev`, supprimer uniquement `dist/build`, puis relancer `npm run build`.
+
+## Notifications e-mail des formulaires
+
+Le provider `@strapi/provider-email-nodemailer` utilise les variables suivantes :
+
+```dotenv
+PUBLIC_URL=https://wesoft.wenegoce.fr
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_REQUIRE_TLS=true
+SMTP_USERNAME=mailer@example.com
+SMTP_PASSWORD=mot-de-passe-smtp
+EMAIL_DEFAULT_FROM=WeSoft <mailer@example.com>
+EMAIL_DEFAULT_REPLY_TO=contact@example.com
+FORM_NOTIFICATION_DEFAULT_TO=contact@example.com
+```
+
+Dans chaque entree **Formulaire**, `notificationRecipients` accepte plusieurs adresses separees par une virgule, un point-virgule ou un retour a la ligne. Cette liste est prioritaire sur `FORM_NOTIFICATION_DEFAULT_TO`.
 
 ## Variables d'environnement
 
