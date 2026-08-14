@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_feature_items","info":{"displayName":"Carte / caractéristique"},"attributes":{"title":{"type":"string","required":true},"text":{"type":"text"},"icon":{"type":"customField","customField":"global::icon-picker"},"backgroundColor":{"type":"string","regex":"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"}}}

@@ -1,0 +1,1 @@
+{"collectionName":"components_sections_metrics","info":{"displayName":"Chiffres clés"},"attributes":{"anchorId":{"type":"string"},"title":{"type":"string"},"text":{"type":"text"},"metrics":{"type":"component","repeatable":true,"component":"shared.metric"},"background":{"type":"enumeration","enum":["white","sky","lavender","blue","navy","gradient"],"default":"blue"}}}

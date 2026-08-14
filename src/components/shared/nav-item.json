@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_nav_items","info":{"displayName":"Lien de navigation"},"attributes":{"label":{"type":"string","required":true},"href":{"type":"string","required":true},"linkType":{"type":"enumeration","enum":["internal","external"],"default":"internal"},"children":{"type":"component","repeatable":true,"component":"shared.nav-child"}}}

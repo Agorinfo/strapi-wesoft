@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_team_members","info":{"displayName":"Membre de l'équipe"},"attributes":{"name":{"type":"string","required":true},"role":{"type":"string"},"biography":{"type":"text"},"photo":{"type":"media","multiple":false,"allowedTypes":["images"]}}}

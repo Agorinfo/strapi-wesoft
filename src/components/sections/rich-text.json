@@ -1,0 +1,1 @@
+{"collectionName":"components_sections_rich_texts","info":{"displayName":"Texte riche"},"attributes":{"anchorId":{"type":"string"},"eyebrow":{"type":"string"},"title":{"type":"string"},"content":{"type":"richtext","required":true},"background":{"type":"enumeration","enum":["white","sky","lavender","blue","navy","gradient"],"default":"white"}}}

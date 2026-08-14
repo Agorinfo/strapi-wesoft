@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_process_steps","info":{"displayName":"Étape"},"attributes":{"title":{"type":"string","required":true},"text":{"type":"text"},"icon":{"type":"customField","customField":"global::icon-picker"}}}

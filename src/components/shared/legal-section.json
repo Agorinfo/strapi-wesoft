@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_legal_sections","info":{"displayName":"Section légale"},"attributes":{"anchorId":{"type":"string","required":true},"title":{"type":"string","required":true},"content":{"type":"richtext","required":true}}}

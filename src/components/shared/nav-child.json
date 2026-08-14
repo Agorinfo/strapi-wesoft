@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_nav_children","info":{"displayName":"Sous-lien"},"attributes":{"label":{"type":"string","required":true},"href":{"type":"string","required":true},"linkType":{"type":"enumeration","enum":["internal","external"],"default":"internal"},"icon":{"type":"customField","customField":"global::icon-picker"}}}

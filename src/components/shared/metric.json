@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_metrics","info":{"displayName":"Chiffre clé"},"attributes":{"value":{"type":"string","required":true},"label":{"type":"string","required":true},"icon":{"type":"customField","customField":"global::icon-picker"}}}

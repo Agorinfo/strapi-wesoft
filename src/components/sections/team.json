@@ -1,0 +1,1 @@
+{"collectionName":"components_sections_teams","info":{"displayName":"Équipe"},"attributes":{"anchorId":{"type":"string"},"title":{"type":"string","required":true},"text":{"type":"text"},"members":{"type":"component","repeatable":true,"component":"shared.team-member"},"background":{"type":"enumeration","enum":["white","sky","lavender","blue","navy","gradient"],"default":"white"}}}

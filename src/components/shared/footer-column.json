@@ -1,0 +1,1 @@
+{"collectionName":"components_shared_footer_columns","info":{"displayName":"Colonne de footer","description":"Le footer accepte au maximum 5 colonnes"},"attributes":{"title":{"type":"string","required":true},"links":{"type":"component","repeatable":true,"component":"shared.nav-child"}}}

@@ -1,0 +1,1 @@
+{"collectionName":"components_sections_legal_contents","info":{"displayName":"Contenu légal"},"attributes":{"title":{"type":"string","required":true},"text":{"type":"text"},"sections":{"type":"component","repeatable":true,"component":"shared.legal-section"},"background":{"type":"enumeration","enum":["white","sky","lavender","blue","navy","gradient"],"default":"sky"}}}
