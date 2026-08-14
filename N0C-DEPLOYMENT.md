@@ -29,11 +29,21 @@ Le `server.js` du depot charge explicitement l'application compilee dans `dist`.
 Depuis `/home/zrrwnvkz/wesoft` :
 
 ```bash
-npm install --include=dev
+npm ci --include=dev
 npm run build
 ```
 
+`npm ci` installe exactement les versions verrouillees dans `package-lock.json` et remplace l'arbre de dependances existant. Cela evite de compiler l'administration avec plusieurs versions incompatibles des paquets `@strapi/*`.
+
 Le dossier `dist/` est ignore par Git : le build doit donc etre execute sur N0C apres chaque deploiement contenant une modification du backend ou de l'administration Strapi. Redemarrer ensuite l'application depuis le panneau N0C.
+
+Avant le build, verifier que les paquets principaux utilisent tous la meme version :
+
+```bash
+npm ls @strapi/admin @strapi/content-manager @strapi/content-type-builder @strapi/upload @strapi/strapi
+```
+
+Pour ce depot, ils doivent tous afficher `5.50.0`. Si une autre version apparait, ne pas reutiliser le build admin existant : effectuer `npm ci --include=dev`, supprimer uniquement `dist/build`, puis relancer `npm run build`.
 
 ## Variables d'environnement
 
