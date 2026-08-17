@@ -148,6 +148,9 @@ export interface SectionsHero extends Struct.ComponentSchema {
     floatingText: Schema.Attribute.String;
     floatingTitle: Schema.Attribute.String;
     image: Schema.Attribute.Media<'images'>;
+    imageTilt: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    imageTiltSize: Schema.Attribute.Enumeration<['compact', 'large']> &
+      Schema.Attribute.DefaultTo<'compact'>;
     showDecoration: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     text: Schema.Attribute.Text;
     title: Schema.Attribute.String & Schema.Attribute.Required;

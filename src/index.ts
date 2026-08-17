@@ -556,6 +556,115 @@ async function migrateContactPageToFullSection(strapi: Core.Strapi) {
   strapi.log.info('[contact migration] The contact page now uses the full design section and form.');
 }
 
+async function addTiltedPageHeroes(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'contact-and-resources-tilted-heroes-v3' });
+  if (await migrationStore.get()) return;
+
+  const contactImage = await ensureUpload(strapi, 'contact-office.png', 'Bureaux WeSoft');
+  const resourcesImage = await ensureUpload(strapi, 'resources-hero.png', 'Actualités et ressources WeSoft');
+  const pagePopulate = {
+    blocks: {
+      on: {
+        'sections.hero': { populate: { image: true, buttons: true } },
+        'sections.article-list': { populate: '*' },
+        'sections.contact': { populate: '*' },
+        'sections.cta': { populate: { buttons: true } },
+      },
+    },
+  };
+
+  const contactPage = await strapi.documents('api::page.page').findFirst({
+    filters: { slug: 'contact' }, status: 'published', populate: pagePopulate,
+  } as never) as unknown as { documentId: string; blocks?: DynamicBlock[] } | null;
+
+  if (contactPage) {
+    const blocks = prepareForDocumentUpdate(contactPage.blocks || []) as DynamicBlock[];
+    const hero = blocks.find((block) => block.__component === 'sections.hero');
+    if (hero) {
+      hero.imageTilt = true;
+      hero.imageTiltSize = 'large';
+      if (!hero.image && contactImage) hero.image = contactImage;
+    } else {
+      blocks.unshift({
+        __component: 'sections.hero',
+        eyebrow: 'REJOIGNEZ-NOUS',
+        title: 'Entrons en contact !',
+        text: 'Vous êtes un éditeur de logiciel métier et vous souhaitez accélérer votre croissance au sein d’un écosystème d’experts ? Échangeons sur vos ambitions et l’avenir de votre solution.',
+        image: contactImage,
+        imageTilt: true,
+        imageTiltSize: 'large',
+        showDecoration: false,
+        background: 'sky',
+      });
+    }
+    await strapi.documents('api::page.page').update({
+      documentId: contactPage.documentId,
+      data: { blocks } as never,
+      status: 'published',
+    });
+  }
+
+  const resourcesPage = await strapi.documents('api::page.page').findFirst({
+    filters: { slug: 'articles' }, status: 'published', populate: pagePopulate,
+  } as never) as unknown as { documentId: string; blocks?: DynamicBlock[] } | null;
+
+  if (resourcesPage) {
+    const blocks = prepareForDocumentUpdate(resourcesPage.blocks || []) as DynamicBlock[];
+    const hero = blocks.find((block) => block.__component === 'sections.hero');
+    if (hero) {
+      hero.imageTilt = true;
+      hero.imageTiltSize = 'large';
+      if (!hero.image && resourcesImage) hero.image = resourcesImage;
+      await strapi.documents('api::page.page').update({
+        documentId: resourcesPage.documentId,
+        data: { blocks } as never,
+        status: 'published',
+      });
+    }
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString() } });
+  strapi.log.info('[page migration] Contact and Resources heroes now use tilted images.');
+}
+
+async function restoreContactFormRelation(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'contact-form-relation-v1' });
+  if (await migrationStore.get()) return;
+
+  const form = await strapi.documents('api::form.form').findFirst({
+    filters: { slug: 'contact' },
+    status: 'published',
+  } as never) as unknown as { documentId: string } | null;
+  const page = await strapi.documents('api::page.page').findFirst({
+    filters: { slug: 'contact' },
+    status: 'published',
+    populate: {
+      blocks: {
+        on: {
+          'sections.hero': { populate: { image: true, buttons: true } },
+          'sections.contact': { populate: { form: true } },
+        },
+      },
+    },
+  } as never) as unknown as { documentId: string; blocks?: DynamicBlock[] } | null;
+
+  if (form && page) {
+    const blocks = prepareForDocumentUpdate(page.blocks || []) as DynamicBlock[];
+    const contactBlock = blocks.find((block) => block.__component === 'sections.contact');
+    if (contactBlock && !contactBlock.form) {
+      contactBlock.form = form.documentId;
+      await strapi.documents('api::page.page').update({
+        documentId: page.documentId,
+        data: { blocks } as never,
+        status: 'published',
+      });
+      strapi.log.info('[contact migration] Contact form relation restored.');
+    }
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString() } });
+}
+
 async function migrateArticlesToBackOffice(strapi: Core.Strapi) {
   const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'articles-import-v1' });
   if (await migrationStore.get()) return;
@@ -686,6 +795,8 @@ export default {
     await grantArticlePublishingToAuthors(strapi);
     await migrateContactPageToFullSection(strapi);
     await migrateArticlesToBackOffice(strapi);
+    await addTiltedPageHeroes(strapi);
+    await restoreContactFormRelation(strapi);
     await initializeArticleSidebarCtas(strapi);
   },
 };
