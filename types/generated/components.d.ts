@@ -263,42 +263,12 @@ export interface SectionsTestimonialMetrics extends Struct.ComponentSchema {
   };
   attributes: {
     anchorId: Schema.Attribute.String;
-    author: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        'content-manager': {
-          visible: false;
-        };
-      }>;
-    avatar: Schema.Attribute.Media<'images'> &
-      Schema.Attribute.SetPluginOptions<{
-        'content-manager': {
-          visible: false;
-        };
-      }>;
     background: Schema.Attribute.Enumeration<
       ['white', 'sky', 'lavender', 'blue', 'navy', 'gradient']
     > &
       Schema.Attribute.DefaultTo<'blue'>;
-    metrics: Schema.Attribute.Component<'shared.metric', true> &
-      Schema.Attribute.SetPluginOptions<{
-        'content-manager': {
-          visible: false;
-        };
-      }>;
-    quote: Schema.Attribute.Text &
-      Schema.Attribute.SetPluginOptions<{
-        'content-manager': {
-          visible: false;
-        };
-      }>;
     quoteIcon: Schema.Attribute.JSON &
       Schema.Attribute.CustomField<'global::icon-picker'>;
-    role: Schema.Attribute.String &
-      Schema.Attribute.SetPluginOptions<{
-        'content-manager': {
-          visible: false;
-        };
-      }>;
     testimonials: Schema.Attribute.Component<'shared.testimonial', true>;
   };
 }
