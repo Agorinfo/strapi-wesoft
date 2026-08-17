@@ -491,9 +491,42 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'article'>;
     seo: Schema.Attribute.Component<'shared.seo', false>;
-    sidebarButton: Schema.Attribute.Component<'shared.button', false>;
-    sidebarText: Schema.Attribute.Text;
-    sidebarTitle: Schema.Attribute.String;
+    sidebarButton: Schema.Attribute.Component<'shared.button', false> &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
+    sidebarSecondaryButton: Schema.Attribute.Component<'shared.button', false> &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
+    sidebarSecondaryText: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
+    sidebarSecondaryTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
+    sidebarText: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
+    sidebarTitle: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
@@ -661,6 +694,22 @@ export interface ApiSiteConfigSiteConfig extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    articleSidebarPrimaryButton: Schema.Attribute.Component<
+      'shared.button',
+      false
+    >;
+    articleSidebarPrimaryText: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'D\u00E9couvrez comment nos solutions ERP int\u00E8grent l\u2019IA pour votre m\u00E9tier.'>;
+    articleSidebarPrimaryTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Pr\u00EAt pour la r\u00E9volution ?'>;
+    articleSidebarSecondaryButton: Schema.Attribute.Component<
+      'shared.button',
+      false
+    >;
+    articleSidebarSecondaryText: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'D\u00E9couvrez comment nos solutions ERP int\u00E8grent l\u2019IA pour votre m\u00E9tier.'>;
+    articleSidebarSecondaryTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Pr\u00EAt pour la r\u00E9volution ?'>;
     copyright: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

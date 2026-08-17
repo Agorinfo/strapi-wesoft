@@ -99,6 +99,12 @@ const siteConfig = {
   footerIntro: 'Le partenaire de référence pour l’excellence opérationnelle et la croissance des éditeurs de logiciels verticaux.',
   footerColumns: [{ title: 'Liens utiles', links: [{ label: 'Nos solutions', href: '/#solutions', linkType: 'internal' }, { label: 'Notre processus', href: '/#processus', linkType: 'internal' }, { label: 'Ressources', href: '/articles', linkType: 'internal' }] }, { title: 'Légal', links: [{ label: 'Mentions légales', href: '/mentions-legales', linkType: 'internal' }, { label: 'Politique de confidentialité', href: '/politique-de-confidentialite', linkType: 'internal' }] }],
   copyright: '© 2026 WeSoft. Tous droits réservés.',
+  articleSidebarPrimaryTitle: 'Prêt pour la révolution ?',
+  articleSidebarPrimaryText: 'Découvrez comment nos solutions ERP intègrent l’IA pour votre métier.',
+  articleSidebarPrimaryButton: { label: 'Découvrir nos solutions', href: '/#solutions', linkType: 'internal', style: 'primary' },
+  articleSidebarSecondaryTitle: 'Prêt pour la révolution ?',
+  articleSidebarSecondaryText: 'Découvrez comment nos solutions ERP intègrent l’IA pour votre métier.',
+  articleSidebarSecondaryButton: { label: 'Voir nos éditeurs', href: '/#solutions', linkType: 'internal', style: 'light' },
 };
 
 const secondaryPages = [
@@ -616,6 +622,45 @@ async function migrateArticlesToBackOffice(strapi: Core.Strapi) {
   strapi.log.info(`[article migration] ${importedCount} articles imported and /articles is now managed by Strapi.`);
 }
 
+async function initializeArticleSidebarCtas(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'site-config-article-sidebar-ctas-v1' });
+  if (await migrationStore.get()) return;
+
+  const config = await strapi.documents('api::site-config.site-config').findFirst({
+    status: 'published',
+    populate: { articleSidebarPrimaryButton: true, articleSidebarSecondaryButton: true },
+  } as never) as unknown as {
+    documentId: string;
+    articleSidebarPrimaryTitle?: string;
+    articleSidebarPrimaryText?: string;
+    articleSidebarPrimaryButton?: unknown;
+    articleSidebarSecondaryTitle?: string;
+    articleSidebarSecondaryText?: string;
+    articleSidebarSecondaryButton?: unknown;
+  } | null;
+
+  if (config) {
+    const data: Record<string, unknown> = {};
+    if (!config.articleSidebarPrimaryTitle) data.articleSidebarPrimaryTitle = siteConfig.articleSidebarPrimaryTitle;
+    if (!config.articleSidebarPrimaryText) data.articleSidebarPrimaryText = siteConfig.articleSidebarPrimaryText;
+    if (!config.articleSidebarPrimaryButton) data.articleSidebarPrimaryButton = siteConfig.articleSidebarPrimaryButton;
+    if (!config.articleSidebarSecondaryTitle) data.articleSidebarSecondaryTitle = siteConfig.articleSidebarSecondaryTitle;
+    if (!config.articleSidebarSecondaryText) data.articleSidebarSecondaryText = siteConfig.articleSidebarSecondaryText;
+    if (!config.articleSidebarSecondaryButton) data.articleSidebarSecondaryButton = siteConfig.articleSidebarSecondaryButton;
+
+    if (Object.keys(data).length) {
+      await strapi.documents('api::site-config.site-config').update({
+        documentId: config.documentId,
+        data: data as never,
+        status: 'published',
+      });
+    }
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString() } });
+  strapi.log.info('[site configuration] Article sidebar CTAs initialized.');
+}
+
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     registerIconPicker(strapi);
@@ -641,5 +686,6 @@ export default {
     await grantArticlePublishingToAuthors(strapi);
     await migrateContactPageToFullSection(strapi);
     await migrateArticlesToBackOffice(strapi);
+    await initializeArticleSidebarCtas(strapi);
   },
 };
