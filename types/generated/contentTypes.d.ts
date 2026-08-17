@@ -432,6 +432,8 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     registrationToken: Schema.Attribute.String & Schema.Attribute.Private;
     resetPasswordToken: Schema.Attribute.String & Schema.Attribute.Private;
+    resetPasswordTokenExpiresAt: Schema.Attribute.DateTime &
+      Schema.Attribute.Private;
     roles: Schema.Attribute.Relation<'manyToMany', 'admin::role'> &
       Schema.Attribute.Private;
     updatedAt: Schema.Attribute.DateTime;
@@ -525,6 +527,12 @@ export interface ApiFormSubmissionFormSubmission
       'api::form-submission.form-submission'
     > &
       Schema.Attribute.Private;
+    notificationError: Schema.Attribute.Text & Schema.Attribute.Private;
+    notificationSentAt: Schema.Attribute.DateTime;
+    notificationStatus: Schema.Attribute.Enumeration<
+      ['pending', 'sent', 'failed', 'skipped']
+    > &
+      Schema.Attribute.DefaultTo<'pending'>;
     payload: Schema.Attribute.JSON & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     status: Schema.Attribute.Enumeration<['new', 'processed', 'spam']> &
@@ -557,6 +565,11 @@ export interface ApiFormForm extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::form.form'> &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    notificationEnabled: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    notificationRecipients: Schema.Attribute.Text & Schema.Attribute.Private;
+    notificationSubject: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Nouvelle soumission \u2014 {form}'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     submissions: Schema.Attribute.Relation<
@@ -1184,7 +1197,7 @@ export interface PluginUsersPermissionsUser
 }
 
 declare module '@strapi/strapi' {
-  export module Public {
+  export namespace Public {
     export interface ContentTypeSchemas {
       'admin::api-token': AdminApiToken;
       'admin::api-token-permission': AdminApiTokenPermission;

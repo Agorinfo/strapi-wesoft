@@ -21,11 +21,25 @@ const testimonialMetrics = {
   __component: 'sections.testimonial-metrics',
   background: 'blue',
   testimonials: [
-    { quote: 'Rejoindre WeSoft a été le catalyseur dont nous avions besoin. Nous avons gardé notre expertise métier tout en bénéficiant d’une force de frappe technologique mondiale.', author: 'Jean-Marc Lemoine', role: 'Fondateur de AgriTech Solutions' },
-    { quote: 'WeSoft nous a permis de structurer notre croissance internationale tout en maintenant une cohésion d’équipe exceptionnelle.', author: 'Sophie Marchand', role: 'DSI de MediConnect' },
-    { quote: 'Grâce à l’intégration WeSoft, nous avons réduit nos délais de mise en marché de 40 %.', author: 'Thomas Renard', role: 'CEO de FinTech Innov' },
+    {
+      quote: 'Rejoindre WeSoft a été le catalyseur dont nous avions besoin. Nous avons gardé notre expertise métier tout en bénéficiant d’une force de frappe technologique mondiale.',
+      author: 'Jean-Marc Lemoine',
+      role: 'Fondateur de AgriTech Solutions',
+      metrics: [{ value: '15+', label: 'Logiciels intégrés' }, { value: '450+', label: 'Collaborateurs experts' }, { value: '92%', label: 'Taux de rétention clients' }, { value: '24M€', label: 'Investissement R&D annuel' }],
+    },
+    {
+      quote: 'WeSoft nous a permis de structurer notre croissance internationale tout en maintenant une cohésion d’équipe exceptionnelle.',
+      author: 'Sophie Marchand',
+      role: 'DSI de MediConnect',
+      metrics: [{ value: '12', label: 'Pays accompagnés' }, { value: '98%', label: 'Satisfaction des équipes' }, { value: '3x', label: 'Croissance internationale' }, { value: '24/7', label: 'Support mutualisé' }],
+    },
+    {
+      quote: 'Grâce à l’intégration WeSoft, nous avons réduit nos délais de mise en marché de 40 %.',
+      author: 'Thomas Renard',
+      role: 'CEO de FinTech Innov',
+      metrics: [{ value: '-40%', label: 'Délai de mise en marché' }, { value: '2x', label: 'Capacité de déploiement' }],
+    },
   ],
-  metrics: [{ value: '15+', label: 'Logiciels intégrés' }, { value: '450+', label: 'Collaborateurs experts' }, { value: '92%', label: 'Taux de rétention clients' }, { value: '24M€', label: 'Investissement R&D annuel' }],
 };
 
 const teamSection = {
@@ -40,6 +54,28 @@ const teamSection = {
   ],
 };
 
+const contactFormFields = [
+  { name: 'firstName', label: 'Prénom', type: 'text', placeholder: 'Jean', required: true, width: 'half' },
+  { name: 'lastName', label: 'Nom', type: 'text', placeholder: 'Dupont', required: true, width: 'half' },
+  { name: 'email', label: 'Email professionnel', type: 'email', placeholder: 'j.dupont@societe.fr', required: true, width: 'half' },
+  { name: 'company', label: 'Société / Logiciel', type: 'text', placeholder: 'Nom de votre structure', width: 'half' },
+  {
+    name: 'sector',
+    label: 'Votre secteur d’activité',
+    type: 'select',
+    placeholder: 'Sélectionnez un secteur',
+    width: 'full',
+    options: [
+      { label: 'Agriculture', value: 'agriculture' },
+      { label: 'BTP / Location', value: 'btp' },
+      { label: 'Négoce', value: 'negoce' },
+      { label: 'Autre', value: 'autre' },
+    ],
+  },
+  { name: 'message', label: 'Message', type: 'textarea', placeholder: 'Parlez-nous de votre projet ou de votre solution…', required: true, width: 'full' },
+  { name: 'consent', label: 'J’accepte que WeSoft traite mes données pour répondre à ma demande.', type: 'checkbox', required: true, width: 'full' },
+];
+
 const home = {
   title: 'Accueil', slug: 'accueil', pageType: 'home',
   excerpt: 'WeSoft accompagne les éditeurs de logiciels verticaux dans leur croissance.',
@@ -49,7 +85,7 @@ const home = {
     { __component: 'sections.feature-grid', anchorId: 'solutions', eyebrow: 'NOTRE APPROCHE', title: 'Nos 4 piliers stratégiques', text: 'Une approche intégrée pour garantir le succès de votre transition numérique et métier.', background: 'white', features: [{ title: 'Expertise métier', text: 'Une compréhension profonde des enjeux quotidiens pour une réponse logicielle pertinente.' }, { title: 'Innovation technologique', text: 'Une technologie qui apporte un bénéfice métier réel. Pas de technologie pour la technologie.' }, { title: 'Accompagnement', text: 'Renforcer la satisfaction client en s’appuyant sur l’énergie des équipes en place.' }, { title: 'Nouveau souffle', text: 'Continuer à écrire l’histoire de votre solution dans le périmètre dynamique de WeSoft.' }] },
     { __component: 'sections.process', anchorId: 'processus', eyebrow: 'TRANSMISSION', title: 'Un processus d’acquisition serein et structuré', text: 'Nous privilégions la continuité opérationnelle et le respect de votre ADN historique.', background: 'sky', steps: [{ title: 'Diagnostic stratégique', text: 'Analyse de votre produit, de votre marché et de votre potentiel.' }, { title: 'Valorisation & offre', text: 'Une proposition transparente basée sur une vision de long terme.' }, { title: 'Intégration douce', text: 'Des synergies groupe tout en préservant l’autonomie des équipes.' }, { title: 'Accélération', text: 'Déploiement du plan de croissance, de la R&D et du marketing.' }] },
     softwareShowcase,
-    { __component: 'sections.business-characteristics', eyebrow: 'ÉDITEURS', title: 'Vos caractéristiques métiers', text: 'Nous cherchons à acquérir des éditeurs de logiciels verticaux avec des critères de performance et d’humain élevés.', background: 'sky', button: { label: 'Contactez-nous', style: 'secondary', linkType: 'internal', href: '/contact' }, cards: [{ title: 'Savoir-faire reconnu', text: 'Une expertise métier forte et un savoir-faire validé par vos clients et votre marché sectoriel.', backgroundColor: '#004b93' }, { title: '0,5 - 3M€', text: 'Chiffre d’affaires annuel avec une part significative de revenu récurrent.', backgroundColor: '#dce6ff' }, { title: 'Fidélité client', text: 'Une forte satisfaction clients qui témoigne de leur attachement indéfectible.', backgroundColor: '#ffffff' }, { title: 'Équipiers engagés', text: 'Des collaborateurs dévoués au service de leurs clients.', backgroundColor: '#606979' }] },
+    { __component: 'sections.business-characteristics', eyebrow: 'ÉDITEURS', title: 'Vos caractéristiques métiers', text: 'Nous cherchons à acquérir des éditeurs de logiciels verticaux avec des critères de performance et d’humain élevés.', background: 'sky', button: { label: 'Contactez-nous', style: 'secondary', linkType: 'internal', href: '/contact' }, cards: [{ title: 'Savoir-faire reconnu', text: 'Une expertise métier forte et un savoir-faire validé par vos clients et votre marché sectoriel.', backgroundColor: '#004b93', colSpan: 5 }, { title: '0,5 - 3M€', text: 'Chiffre d’affaires annuel avec une part significative de revenu récurrent.', backgroundColor: '#dce6ff', colSpan: 3 }, { title: 'Fidélité client', text: 'Une forte satisfaction clients qui témoigne de leur attachement indéfectible.', backgroundColor: '#ffffff', colSpan: 4 }, { title: 'Équipiers engagés', text: 'Des collaborateurs dévoués au service de leurs clients.', backgroundColor: '#606979', colSpan: 4 }] },
     testimonialMetrics,
     teamSection,
     { __component: 'sections.cta', title: 'Prêt à entamer un nouveau chapitre ?', text: 'Ensemble, donnons un nouveau souffle à votre solution logicielle.', background: 'blue', buttons: [{ label: 'Prendre rendez-vous', style: 'light', linkType: 'internal', href: '/contact' }] },
@@ -85,7 +121,7 @@ const homepageBlockPopulate = {
         populate: { items: { populate: { logo: true, image: true, button: true, capabilities: true } } },
       },
       'sections.testimonial-metrics': {
-        populate: { avatar: true, testimonials: { populate: { avatar: true } }, metrics: true },
+        populate: { avatar: true, testimonials: { populate: { avatar: true, metrics: true } }, metrics: true },
       },
       'sections.team': { populate: { members: { populate: { photo: true } } } },
     },
@@ -334,6 +370,186 @@ async function repairHomepageMediaRelations(strapi: Core.Strapi) {
   strapi.log.info('[homepage migration] Missing homepage media relations were restored.');
 }
 
+async function migrateTestimonialMetricsToSlides(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'testimonial-metrics-per-slide-v1' });
+  if (await migrationStore.get()) return;
+
+  const homepage = await strapi.documents('api::page.page').findFirst({
+    filters: { slug: 'accueil' },
+    status: 'published',
+    populate: homepageBlockPopulate,
+  } as never) as unknown as { documentId: string; blocks?: DynamicBlock[] } | null;
+
+  if (!homepage) return;
+
+  const blocks = prepareForDocumentUpdate(homepage.blocks || []) as DynamicBlock[];
+  let migratedTestimonials = 0;
+
+  for (const block of blocks) {
+    if (block.__component !== 'sections.testimonial-metrics' || !Array.isArray(block.testimonials)) continue;
+
+    const legacyMetrics = Array.isArray(block.metrics) ? block.metrics : [];
+    if (legacyMetrics.length === 0) continue;
+
+    block.testimonials = block.testimonials.map((testimonial: Record<string, any>) => {
+      if (Array.isArray(testimonial.metrics) && testimonial.metrics.length > 0) return testimonial;
+      migratedTestimonials += 1;
+      return { ...testimonial, metrics: structuredClone(legacyMetrics) };
+    });
+  }
+
+  if (migratedTestimonials > 0) {
+    await strapi.documents('api::page.page').update({
+      documentId: homepage.documentId,
+      data: { blocks } as never,
+      status: 'published',
+    });
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString(), migratedTestimonials } });
+  strapi.log.info(`[testimonial migration] ${migratedTestimonials} testimonial slide(s) now own their metrics.`);
+}
+
+async function migrateBusinessCharacteristicsSpans(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'business-characteristics-col-spans-v2' });
+  if (await migrationStore.get()) return;
+
+  const homepage = await strapi.documents('api::page.page').findFirst({
+    filters: { slug: 'accueil' },
+    status: 'published',
+    populate: homepageBlockPopulate,
+  } as never) as unknown as { documentId: string; blocks?: DynamicBlock[] } | null;
+  if (!homepage) return;
+
+  const blocks = prepareForDocumentUpdate(homepage.blocks || []) as DynamicBlock[];
+  const defaultSpans = [5, 3, 4, 4];
+  let updatedCards = 0;
+
+  for (const block of blocks) {
+    if (block.__component !== 'sections.business-characteristics' || !Array.isArray(block.cards)) continue;
+    const hasOnlyDefaultSpans = block.cards.every((card: Record<string, any>) => card.colSpan === 4);
+    block.cards = block.cards.map((card: Record<string, any>, index: number) => {
+      if (!hasOnlyDefaultSpans && Number.isInteger(card.colSpan) && card.colSpan >= 1 && card.colSpan <= 8) return card;
+      updatedCards += 1;
+      return { ...card, colSpan: defaultSpans[index] || 4 };
+    });
+  }
+
+  if (updatedCards > 0) {
+    await strapi.documents('api::page.page').update({
+      documentId: homepage.documentId,
+      data: { blocks } as never,
+      status: 'published',
+    });
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString(), updatedCards } });
+  strapi.log.info(`[business characteristics migration] ${updatedCards} card span(s) initialized.`);
+}
+
+async function grantArticlePublishingToAuthors(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'author-article-publish-v1' });
+  if (await migrationStore.get()) return;
+
+  const connection = strapi.db.connection;
+  const authorRole = await connection('admin_roles')
+    .select('id')
+    .where({ code: 'strapi-author' })
+    .first();
+  const publishPermission = await connection('admin_permissions')
+    .select('id')
+    .where({
+      action: 'plugin::content-manager.explorer.publish',
+      subject: 'api::article.article',
+    })
+    .first();
+
+  if (!authorRole || !publishPermission) {
+    strapi.log.warn('[permissions migration] Author role or article publication permission was not found.');
+    return;
+  }
+
+  const existingLink = await connection('admin_permissions_role_lnk')
+    .where({ role_id: authorRole.id, permission_id: publishPermission.id })
+    .first();
+
+  if (!existingLink) {
+    await connection('admin_permissions_role_lnk').insert({
+      role_id: authorRole.id,
+      permission_id: publishPermission.id,
+    });
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString() } });
+  strapi.log.info('[permissions migration] The Author role can now publish articles.');
+}
+
+async function migrateContactPageToFullSection(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'contact-page-full-section-v1' });
+  if (await migrationStore.get()) return;
+
+  const contactForm = await strapi.documents('api::form.form').findFirst({
+    filters: { slug: 'contact' },
+    status: 'published',
+    populate: { fields: true },
+  } as never) as unknown as { documentId: string; fields?: Array<{ name?: string }> } | null;
+
+  if (!contactForm) return;
+
+  const legacyFieldNames = ['name', 'email', 'company', 'message'];
+  const currentFieldNames = (contactForm.fields || []).map((field) => field.name).filter(Boolean);
+  if (currentFieldNames.length === legacyFieldNames.length && currentFieldNames.every((name, index) => name === legacyFieldNames[index])) {
+    await strapi.documents('api::form.form').update({
+      documentId: contactForm.documentId,
+      data: {
+        title: 'Parlons de votre projet',
+        description: 'Vous dirigez un éditeur ou souhaitez échanger avec WeSoft ? Présentez-nous votre projet.',
+        submitLabel: 'Envoyer le message',
+        fields: contactFormFields,
+      } as never,
+      status: 'published',
+    });
+  }
+
+  const contactPage = await strapi.documents('api::page.page').findFirst({
+    filters: { slug: 'contact' },
+    status: 'published',
+    populate: { blocks: true },
+  } as never) as unknown as { documentId: string; blocks?: DynamicBlock[] } | null;
+
+  if (!contactPage) return;
+
+  const blocks = prepareForDocumentUpdate(contactPage.blocks || []) as DynamicBlock[];
+  const hasFullContactSection = blocks.some((block) => block.__component === 'sections.contact');
+  const nextBlocks = hasFullContactSection ? blocks : blocks.map((block) => {
+    if (block.__component !== 'sections.form-section') return block;
+    return {
+      __component: 'sections.contact',
+      title: 'Parlons de votre projet',
+      officeTitle: 'Le siège',
+      officeName: 'WeSoft',
+      address: '218 rue de la Ronce\n76230 Isneauville',
+      socialTitle: 'Suivez-nous',
+      socialText: 'Découvrez les actualités du groupe et de ses éditeurs.',
+      socialLabel: 'LinkedIn',
+      socialHref: 'https://www.linkedin.com/company/wesoft/',
+      form: contactForm.documentId,
+      background: 'sky',
+    };
+  });
+
+  if (!hasFullContactSection) {
+    await strapi.documents('api::page.page').update({
+      documentId: contactPage.documentId,
+      data: { blocks: nextBlocks } as never,
+      status: 'published',
+    });
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString() } });
+  strapi.log.info('[contact migration] The contact page now uses the full design section and form.');
+}
+
 async function migrateArticlesToBackOffice(strapi: Core.Strapi) {
   const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'articles-import-v1' });
   if (await migrationStore.get()) return;
@@ -409,7 +625,7 @@ export default {
     if (!config) await strapi.documents('api::site-config.site-config').create({ data: siteConfig as never, status: 'published' });
 
     const forms = await strapi.documents('api::form.form').findMany({ limit: 1 });
-    const contactForm = forms[0] || await strapi.documents('api::form.form').create({ data: { name: 'Contact', slug: 'contact', title: 'Parlons de votre projet', description: 'Présentez-nous votre entreprise ou votre besoin.', submitLabel: 'Envoyer ma demande', successMessage: 'Merci, nous revenons vers vous rapidement.', fields: [{ name: 'name', label: 'Nom et prénom', type: 'text', required: true, width: 'half' }, { name: 'email', label: 'E-mail', type: 'email', required: true, width: 'half' }, { name: 'company', label: 'Entreprise', type: 'text', required: false, width: 'full' }, { name: 'message', label: 'Votre message', type: 'textarea', required: true, width: 'full' }] } as never, status: 'published' });
+    const contactForm = forms[0] || await strapi.documents('api::form.form').create({ data: { name: 'Contact', slug: 'contact', title: 'Parlons de votre projet', description: 'Présentez-nous votre entreprise ou votre besoin.', submitLabel: 'Envoyer ma demande', successMessage: 'Merci, nous revenons vers vous rapidement.', fields: contactFormFields } as never, status: 'published' });
 
     const initialPages = [home, ...secondaryPages, { title: 'Contact', slug: 'contact', pageType: 'contact', excerpt: 'Présentez-nous votre projet.', blocks: [{ __component: 'sections.form-section', eyebrow: 'CONTACT', title: 'Entrons en contact', text: 'Vous dirigez un éditeur ou souhaitez échanger avec WeSoft ? Écrivez-nous.', form: contactForm.documentId, background: 'sky' }] }];
     for (const page of initialPages) {
@@ -420,6 +636,10 @@ export default {
     await migrateHomepageToBackOffice(strapi);
     await migrateWhoWeAreToHomepageAnchor(strapi);
     await repairHomepageMediaRelations(strapi);
+    await migrateTestimonialMetricsToSlides(strapi);
+    await migrateBusinessCharacteristicsSpans(strapi);
+    await grantArticlePublishingToAuthors(strapi);
+    await migrateContactPageToFullSection(strapi);
     await migrateArticlesToBackOffice(strapi);
   },
 };

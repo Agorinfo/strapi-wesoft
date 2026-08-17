@@ -263,17 +263,42 @@ export interface SectionsTestimonialMetrics extends Struct.ComponentSchema {
   };
   attributes: {
     anchorId: Schema.Attribute.String;
-    author: Schema.Attribute.String;
-    avatar: Schema.Attribute.Media<'images'>;
+    author: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
+    avatar: Schema.Attribute.Media<'images'> &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
     background: Schema.Attribute.Enumeration<
       ['white', 'sky', 'lavender', 'blue', 'navy', 'gradient']
     > &
       Schema.Attribute.DefaultTo<'blue'>;
-    metrics: Schema.Attribute.Component<'shared.metric', true>;
-    quote: Schema.Attribute.Text;
+    metrics: Schema.Attribute.Component<'shared.metric', true> &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
+    quote: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
     quoteIcon: Schema.Attribute.JSON &
       Schema.Attribute.CustomField<'global::icon-picker'>;
-    role: Schema.Attribute.String;
+    role: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        'content-manager': {
+          visible: false;
+        };
+      }>;
     testimonials: Schema.Attribute.Component<'shared.testimonial', true>;
   };
 }
@@ -316,6 +341,15 @@ export interface SharedFeatureItem extends Struct.ComponentSchema {
   };
   attributes: {
     backgroundColor: Schema.Attribute.String;
+    colSpan: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 8;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<4>;
     icon: Schema.Attribute.JSON &
       Schema.Attribute.CustomField<'global::icon-picker'>;
     text: Schema.Attribute.Text;
@@ -496,13 +530,14 @@ export interface SharedTestimonial extends Struct.ComponentSchema {
   attributes: {
     author: Schema.Attribute.String & Schema.Attribute.Required;
     avatar: Schema.Attribute.Media<'images'>;
+    metrics: Schema.Attribute.Component<'shared.metric', true>;
     quote: Schema.Attribute.Text & Schema.Attribute.Required;
     role: Schema.Attribute.String;
   };
 }
 
 declare module '@strapi/strapi' {
-  export module Public {
+  export namespace Public {
     export interface ComponentSchemas {
       'sections.article-list': SectionsArticleList;
       'sections.business-characteristics': SectionsBusinessCharacteristics;

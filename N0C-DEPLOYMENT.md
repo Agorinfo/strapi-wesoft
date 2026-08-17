@@ -64,6 +64,15 @@ FORM_NOTIFICATION_DEFAULT_TO=contact@example.com
 
 Dans chaque entree **Formulaire**, `notificationRecipients` accepte plusieurs adresses separees par une virgule, un point-virgule ou un retour a la ligne. Cette liste est prioritaire sur `FORM_NOTIFICATION_DEFAULT_TO`.
 
+Apres l'installation, verifier que Strapi charge bien le provider et non le paquet Nodemailer brut :
+
+```bash
+npm ls @strapi/email @strapi/provider-email-nodemailer @strapi/strapi
+node -e "const provider = require('@strapi/provider-email-nodemailer'); console.log(typeof provider.init)"
+```
+
+La seconde commande doit afficher `function`. Si elle echoue ou affiche `undefined`, executer `npm ci --include=dev` depuis la racine de l'application avant de reconstruire et redemarrer Strapi.
+
 ## Variables d'environnement
 
 Configurer les variables suivantes dans l'application Node.js N0C (ne pas committer leurs valeurs reelles) :
