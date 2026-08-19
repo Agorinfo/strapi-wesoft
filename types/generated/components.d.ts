@@ -219,7 +219,14 @@ export interface SectionsRichText extends Struct.ComponentSchema {
       ['white', 'sky', 'lavender', 'blue', 'navy', 'gradient']
     > &
       Schema.Attribute.DefaultTo<'white'>;
-    content: Schema.Attribute.RichText & Schema.Attribute.Required;
+    content: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.CustomField<
+        'plugin::tiptap-editor.RichText',
+        {
+          preset: 'content';
+        }
+      >;
     eyebrow: Schema.Attribute.String;
     title: Schema.Attribute.String;
   };
@@ -392,7 +399,14 @@ export interface SharedLegalSection extends Struct.ComponentSchema {
   };
   attributes: {
     anchorId: Schema.Attribute.String & Schema.Attribute.Required;
-    content: Schema.Attribute.RichText & Schema.Attribute.Required;
+    content: Schema.Attribute.Text &
+      Schema.Attribute.Required &
+      Schema.Attribute.CustomField<
+        'plugin::tiptap-editor.RichText',
+        {
+          preset: 'content';
+        }
+      >;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }

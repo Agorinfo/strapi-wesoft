@@ -108,8 +108,8 @@ const siteConfig = {
 };
 
 const secondaryPages = [
-  { title: 'Mentions légales', slug: 'mentions-legales', pageType: 'legal', blocks: [{ __component: 'sections.rich-text', eyebrow: 'INFORMATIONS', title: 'Mentions légales', content: '<p>WeSoft SAS — 218 rue de la Ronce, 76230 Isneauville. Les informations légales détaillées peuvent être complétées depuis cet écran dans Strapi.</p>', background: 'white' }] },
-  { title: 'Politique de confidentialité', slug: 'politique-de-confidentialite', pageType: 'legal', blocks: [{ __component: 'sections.rich-text', eyebrow: 'DONNÉES PERSONNELLES', title: 'Politique de confidentialité', content: '<p>Cette page est administrable depuis Strapi. Complétez ici les finalités, durées de conservation et modalités d’exercice des droits applicables au site.</p>', background: 'white' }] },
+  { title: 'Mentions légales', slug: 'mentions-legales', pageType: 'legal', blocks: [{ __component: 'sections.hero', eyebrow: 'INFORMATIONS', title: 'Mentions légales', text: 'Retrouvez les informations relatives à l’éditeur du site et à ses conditions d’utilisation.', background: 'sky' }, { __component: 'sections.rich-text', eyebrow: 'INFORMATIONS', title: 'Mentions légales', content: '<p>WeSoft SAS — 218 rue de la Ronce, 76230 Isneauville. Les informations légales détaillées peuvent être complétées depuis cet écran dans Strapi.</p>', background: 'white' }] },
+  { title: 'Politique de confidentialité', slug: 'politique-de-confidentialite', pageType: 'legal', blocks: [{ __component: 'sections.hero', eyebrow: 'VOS DONNÉES', title: 'Politique de confidentialité', text: 'Découvrez comment WeSoft protège vos données personnelles et les droits dont vous disposez.', background: 'sky' }, { __component: 'sections.rich-text', eyebrow: 'DONNÉES PERSONNELLES', title: 'Politique de confidentialité', content: '<p>Cette page est administrable depuis Strapi. Complétez ici les finalités, durées de conservation et modalités d’exercice des droits applicables au site.</p>', background: 'white' }] },
 ];
 
 type DynamicBlock = Record<string, any> & { __component: string };
@@ -208,6 +208,122 @@ function prepareForDocumentUpdate(value: any): any {
   return Object.fromEntries(Object.entries(value)
     .filter(([key]) => !['id', 'documentId', 'createdAt', 'updatedAt', 'publishedAt', 'locale'].includes(key))
     .map(([key, nested]) => [key, prepareForDocumentUpdate(nested)]));
+}
+
+type TiptapNode = Record<string, unknown> & { type: string; content?: TiptapNode[] };
+
+function decodeHtml(value: string) {
+  return value.replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/&quot;/gi, '"').replace(/&#39;/gi, "'");
+}
+
+function inlineTiptapNodes(value: string): TiptapNode[] {
+  const marks: Array<Record<string, unknown>> = [];
+  const nodes: TiptapNode[] = [];
+  const tokens = value.match(/<[^>]+>|[^<]+/g) || [];
+
+  for (const token of tokens) {
+    if (!token.startsWith('<')) {
+      const text = decodeHtml(token.replace(/\s+/g, ' '));
+      if (text) nodes.push({ type: 'text', text, ...(marks.length ? { marks: structuredClone(marks) } : {}) });
+      continue;
+    }
+    const closing = /^<\//.test(token);
+    const name = token.match(/^<\/?\s*([\w-]+)/)?.[1]?.toLowerCase();
+    if (!name) continue;
+    if (name === 'br') {
+      nodes.push({ type: 'hardBreak' });
+      continue;
+    }
+    if (closing) {
+      const index = [...marks].map((mark) => mark.type).lastIndexOf(name === 'b' ? 'bold' : name === 'i' ? 'italic' : name);
+      if (index >= 0) marks.splice(index, 1);
+      continue;
+    }
+    if (name === 'strong' || name === 'b') marks.push({ type: 'bold' });
+    if (name === 'em' || name === 'i') marks.push({ type: 'italic' });
+    if (name === 'u') marks.push({ type: 'underline' });
+    if (name === 's' || name === 'strike' || name === 'del') marks.push({ type: 'strike' });
+    if (name === 'code') marks.push({ type: 'code' });
+    if (name === 'a') {
+      const href = token.match(/href\s*=\s*["']([^"']+)["']/i)?.[1];
+      const target = token.match(/target\s*=\s*["']([^"']+)["']/i)?.[1];
+      marks.push({ type: 'link', attrs: { ...(href ? { href: decodeHtml(href) } : {}), ...(target ? { target } : {}) } });
+    }
+  }
+  return nodes;
+}
+
+function htmlToTiptap(value: string) {
+  try {
+    const parsed = JSON.parse(value);
+    if (parsed?.type === 'doc') return value;
+  } catch {
+    // Legacy HTML is converted below.
+  }
+
+  const blocks: TiptapNode[] = [];
+  const blockPattern = /<(h[1-6]|p|blockquote|ul|ol|pre)(?:\s[^>]*)?>([\s\S]*?)<\/\1>|<hr\s*\/?\s*>/gi;
+  let cursor = 0;
+  let match: RegExpExecArray | null;
+  const addParagraph = (html: string) => {
+    const content = inlineTiptapNodes(html.replace(/<\/?p[^>]*>/gi, ''));
+    if (content.length) blocks.push({ type: 'paragraph', content });
+  };
+
+  while ((match = blockPattern.exec(value))) {
+    const before = value.slice(cursor, match.index).replace(/<[^>]+>/g, '').trim();
+    if (before) addParagraph(before);
+    cursor = blockPattern.lastIndex;
+    const tag = match[1]?.toLowerCase();
+    const inner = match[2] || '';
+    if (!tag) {
+      blocks.push({ type: 'horizontalRule' });
+      continue;
+    }
+    if (/^h[1-6]$/.test(tag)) {
+      blocks.push({ type: 'heading', attrs: { level: Number(tag.slice(1)) }, content: inlineTiptapNodes(inner) });
+      continue;
+    }
+    if (tag === 'p') {
+      addParagraph(inner);
+      continue;
+    }
+    if (tag === 'blockquote') {
+      const quotedParagraphs = [...inner.matchAll(/<p(?:\s[^>]*)?>([\s\S]*?)<\/p>/gi)].map((item) => ({ type: 'paragraph', content: inlineTiptapNodes(item[1]) }));
+      blocks.push({ type: 'blockquote', content: quotedParagraphs.length ? quotedParagraphs : [{ type: 'paragraph', content: inlineTiptapNodes(inner) }] });
+      continue;
+    }
+    if (tag === 'ul' || tag === 'ol') {
+      const items = [...inner.matchAll(/<li(?:\s[^>]*)?>([\s\S]*?)<\/li>/gi)].map((item) => ({ type: 'listItem', content: [{ type: 'paragraph', content: inlineTiptapNodes(item[1].replace(/<\/?p[^>]*>/gi, '')) }] }));
+      blocks.push({ type: tag === 'ul' ? 'bulletList' : 'orderedList', content: items });
+      continue;
+    }
+    if (tag === 'pre') blocks.push({ type: 'codeBlock', content: inlineTiptapNodes(inner.replace(/<\/?code[^>]*>/gi, '')) });
+  }
+  const trailing = value.slice(cursor).replace(/<[^>]+>/g, '').trim();
+  if (trailing) addParagraph(trailing);
+  return JSON.stringify({ type: 'doc', content: blocks.length ? blocks : [{ type: 'paragraph' }] });
+}
+
+async function migrateRichTextToTiptap(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'tiptap-content-v1' });
+  if (await migrationStore.get()) return;
+
+  const targets = ['articles', 'components_sections_rich_texts', 'components_shared_legal_sections'];
+  let migrated = 0;
+  for (const table of targets) {
+    const entries = await strapi.db.connection(table).select('id', 'content') as Array<{ id: number; content?: unknown }>;
+    for (const entry of entries as Array<{ id: number; content?: unknown }>) {
+      if (typeof entry.content !== 'string' || !entry.content.trim()) continue;
+      const converted = htmlToTiptap(entry.content);
+      if (converted === entry.content) continue;
+      await strapi.db.connection(table).where({ id: entry.id }).update({ content: converted });
+      migrated += 1;
+    }
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString(), migrated } });
+  strapi.log.info(`[tiptap migration] ${migrated} rich-text field(s) converted without deleting their content.`);
 }
 
 async function migrateHomepageToBackOffice(strapi: Core.Strapi) {
@@ -665,6 +781,95 @@ async function restoreContactFormRelation(strapi: Core.Strapi) {
   await migrationStore.set({ value: { completedAt: new Date().toISOString() } });
 }
 
+const defaultLegalSections: Record<string, Array<Record<string, string>>> = {
+  'mentions-legales': [
+    { anchorId: 'editeur', title: '1. Éditeur du Site', content: '<p><strong>Raison Sociale :</strong> WeSoft SAS</p><p><strong>Forme juridique :</strong> Société par Actions Simplifiée (SAS)</p><p><strong>Capital Social :</strong> 200 000 €</p><p><strong>Siège Social :</strong> 218 Rue de la Ronce, 76230 Isneauville, France</p><p><strong>Contact :</strong> contact@wesoft.group</p>' },
+    { anchorId: 'publication', title: '2. Directeur de la Publication', content: '<p>Le directeur de la publication du site WeSoft est Monsieur Jérôme Martin, en sa qualité de Président de WeSoft SAS.</p>' },
+    { anchorId: 'hebergement', title: '3. Hébergement du Site', content: '<p>Le site WeSoft est hébergé par Amazon Web Services (AWS). Les données sont stockées exclusivement sur des serveurs situés en Union Européenne.</p>' },
+    { anchorId: 'propriete', title: '4. Propriété Intellectuelle', content: '<p>L’ensemble du contenu présent sur ce site est la propriété intellectuelle exclusive de WeSoft SAS ou de ses partenaires et est protégé par les lois internationales.</p>' },
+    { anchorId: 'responsabilite', title: '5. Limitation de Responsabilité', content: '<p>WeSoft SAS s’efforce de fournir des informations aussi précises que possible. Le site peut contenir des liens hypertextes vers d’autres sites dont WeSoft ne pourra être tenue responsable.</p>' },
+  ],
+  'politique-de-confidentialite': [
+    { anchorId: 'introduction', title: '1. Introduction', content: '<p>WeSoft s’engage à ce que la collecte et le traitement de vos données soient conformes au règlement général sur la protection des données (RGPD) et à la loi Informatique et Libertés.</p>' },
+    { anchorId: 'donnees', title: '2. Données collectées', content: '<p>Nous limitons la collecte des données personnelles au strict nécessaire : informations transmises via nos formulaires et données techniques de navigation.</p>' },
+    { anchorId: 'finalite', title: '3. Finalité du traitement', content: '<p>Les données recueillies servent à répondre à vos demandes, assurer le suivi commercial et améliorer l’ergonomie et les services proposés.</p>' },
+    { anchorId: 'vos-droits', title: '4. Vos droits', content: '<p>Vous disposez notamment de droits d’accès, de rectification et de suppression concernant vos données personnelles.</p>' },
+    { anchorId: 'cookies', title: '5. Politique de cookies', content: '<p>Notre site utilise des cookies essentiels et, avec votre accord, des outils de mesure d’audience. Vous pouvez modifier vos préférences à tout moment.</p>' },
+  ],
+};
+
+const defaultLegalRichContent = Object.fromEntries(
+  Object.entries(defaultLegalSections).map(([slug, sections]) => [
+    slug,
+    sections.map(({ title, content }) => `<h2>${title}</h2>${content}`).join(''),
+  ]),
+) as Record<string, string>;
+
+function isPlaceholderLegalContent(content: unknown) {
+  return typeof content === 'string' && (
+    content.includes('Les informations légales détaillées peuvent être complétées')
+    || content.includes('Cette page est administrable depuis Strapi')
+  );
+}
+
+function isGeneratedLegalRichContent(content: unknown, slug: string) {
+  return isPlaceholderLegalContent(content) || content === defaultLegalRichContent[slug];
+}
+
+async function addLegalPageHeroes(strapi: Core.Strapi) {
+  const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'legal-content-section-v4' });
+  if (await migrationStore.get()) return;
+
+  const heroes = [
+    { slug: 'mentions-legales', eyebrow: 'INFORMATIONS', title: 'Mentions légales', text: 'Retrouvez les informations relatives à l’éditeur du site et à ses conditions d’utilisation.' },
+    { slug: 'politique-de-confidentialite', eyebrow: 'VOS DONNÉES', title: 'Politique de confidentialité', text: 'Découvrez comment WeSoft protège vos données personnelles et les droits dont vous disposez.' },
+  ];
+
+  for (const hero of heroes) {
+    const page = await strapi.documents('api::page.page').findFirst({
+      filters: { slug: hero.slug },
+      status: 'published',
+      populate: { blocks: { on: {
+        'sections.hero': { populate: { image: true, buttons: true } },
+        'sections.legal-content': { populate: { sections: true } },
+        'sections.rich-text': { populate: '*' },
+      } } },
+    } as never) as unknown as { documentId: string; blocks?: DynamicBlock[] } | null;
+    if (!page) continue;
+
+    const blocks = prepareForDocumentUpdate(page.blocks || []) as DynamicBlock[];
+    let changed = false;
+    if (!blocks.some((block) => block.__component === 'sections.hero')) {
+      blocks.unshift({ __component: 'sections.hero', ...hero, background: 'sky' });
+      changed = true;
+    }
+    const legalContent = blocks.find((block) => block.__component === 'sections.legal-content');
+    if (legalContent && (!Array.isArray(legalContent.sections) || legalContent.sections.length === 0)) {
+      legalContent.sections = defaultLegalSections[hero.slug];
+      changed = true;
+    }
+    const richTextIndex = blocks.findIndex((block) => block.__component === 'sections.rich-text');
+    if (!legalContent && richTextIndex >= 0 && isGeneratedLegalRichContent(blocks[richTextIndex].content, hero.slug)) {
+      blocks.splice(richTextIndex, 1, {
+        __component: 'sections.legal-content',
+        title: hero.title,
+        text: hero.text,
+        background: 'white',
+        sections: defaultLegalSections[hero.slug],
+      });
+      changed = true;
+    }
+    if (changed) await strapi.documents('api::page.page').update({
+      documentId: page.documentId,
+      data: { blocks } as never,
+      status: 'published',
+    });
+  }
+
+  await migrationStore.set({ value: { completedAt: new Date().toISOString() } });
+  strapi.log.info('[legal migration] Legal pages now use the dedicated legal-content section.');
+}
+
 async function migrateArticlesToBackOffice(strapi: Core.Strapi) {
   const migrationStore = strapi.store({ type: 'plugin', name: 'wesoft', key: 'articles-import-v1' });
   if (await migrationStore.get()) return;
@@ -797,6 +1002,8 @@ export default {
     await migrateArticlesToBackOffice(strapi);
     await addTiltedPageHeroes(strapi);
     await restoreContactFormRelation(strapi);
+    await addLegalPageHeroes(strapi);
+    await migrateRichTextToTiptap(strapi);
     await initializeArticleSidebarCtas(strapi);
   },
 };

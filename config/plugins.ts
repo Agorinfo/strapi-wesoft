@@ -61,6 +61,35 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
         },
       },
     },
+    'tiptap-editor': {
+      config: {
+        theme: {
+          colors: [
+            { label: 'Bleu WeSoft', color: '#004b93' },
+            { label: 'Bleu clair', color: '#8fc8ef' },
+            { label: 'Texte', color: '#1d232c' },
+            { label: 'Gris', color: '#5f6b7a' },
+          ],
+        },
+        presets: {
+          article: {
+            bold: true, italic: true, underline: true, strike: true,
+            heading: { levels: [2, 3, 4] },
+            bulletList: true, orderedList: true, blockquote: true,
+            link: { HTMLAttributes: { rel: 'noopener noreferrer' } },
+            horizontalRule: true,
+            mediaLibrary: { resize: { enabled: true } },
+            table: true, textAlign: true, textColor: true, highlightColor: true,
+          },
+          content: {
+            bold: true, italic: true,
+            heading: { levels: [2, 3] },
+            bulletList: true, orderedList: true, blockquote: true,
+            link: { HTMLAttributes: { rel: 'noopener noreferrer' } },
+          },
+        },
+      },
+    },
   };
 };
 

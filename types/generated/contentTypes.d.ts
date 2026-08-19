@@ -458,7 +458,13 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Lire l\u2019article'>;
     category: Schema.Attribute.String;
-    content: Schema.Attribute.RichText;
+    content: Schema.Attribute.Text &
+      Schema.Attribute.CustomField<
+        'plugin::tiptap-editor.RichText',
+        {
+          preset: 'article';
+        }
+      >;
     cover: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

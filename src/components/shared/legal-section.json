@@ -1,1 +1,1 @@
-{"collectionName":"components_shared_legal_sections","info":{"displayName":"Section légale"},"attributes":{"anchorId":{"type":"string","required":true},"title":{"type":"string","required":true},"content":{"type":"richtext","required":true}}}
+{"collectionName":"components_shared_legal_sections","info":{"displayName":"Section légale"},"attributes":{"anchorId":{"type":"string","required":true},"title":{"type":"string","required":true},"content":{"type":"customField","customField":"plugin::tiptap-editor.RichText","options":{"preset":"content"},"required":true}}}
